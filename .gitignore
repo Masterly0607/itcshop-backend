@@ -1,0 +1,9 @@
+/vendor
+/node_modules
+.env
+/storage/app/public
+/storage/logs
+/public/storage
+.DS_Store
+*.log
+*.sqlite
