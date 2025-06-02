@@ -12,9 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Payment table = It stores payment details after a customer places an order.
+
+
         Schema::create('payments', function (Blueprint $table) {
-           $table->id();
-            $table->foreignId('order_id')->references('id')->on('orders');
+            $table->id();
+            $table->foreignId('order_id')->constrained();
             $table->decimal('amount', 10, 2);
             $table->string('status', 45);
             $table->string('type', 45);
