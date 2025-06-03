@@ -16,8 +16,6 @@ return new class extends Migration
             $table->id();
             $table->string('title', 2000);
             $table->string('slug', 2000); // Slug: is a URL-friendly version of a title.(Convert "iPhone 15 Pro Max" => "iphone-15-pro-max"). Make URL like this ecommerce.com/product/iphone-15-pro-max not ecommerce.com/product/123
-
-
             $table->string('image', 2000)->nullable; // image path
             $table->string('image_mime')->nullable(); // image file type 
             $table->integer('image_size')->nullable();

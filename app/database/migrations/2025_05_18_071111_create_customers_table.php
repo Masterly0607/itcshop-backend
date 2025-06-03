@@ -19,10 +19,14 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('address')->nullable();
+            $table->string('otp')->nullable();
+            $table->timestamp('otp_expires_at')->nullable();
 
             $table->string('password');
             $table->string('phone')->nullable();
             $table->string('status', 45)->nullable();
+            $table->boolean('is_verified')->default(false);
+
             $table->timestamps();
             $table->foreignIdFor(User::class, 'created_by')->nullable();
             $table->foreignIdFor(User::class, 'updated_by')->nullable();
