@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Customer\AuthController;
 use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\CouponController;
 use App\Http\Controllers\Customer\ForgotPasswordController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Customer\WishlistController;
@@ -34,5 +35,8 @@ Route::prefix('customer')->group(function () {
     Route::get('/wishlist', [WishlistController::class, 'index']);
     Route::post('/wishlist', [WishlistController::class, 'store']);
     Route::delete('/wishlist/{id}', [WishlistController::class, 'destroy']);
+
+
+    Route::post('/cart/apply-coupon', [CouponController::class, 'apply']);
   });
 });
