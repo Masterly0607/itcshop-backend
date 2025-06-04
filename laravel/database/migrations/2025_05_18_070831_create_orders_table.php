@@ -14,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('customer_id')->constrained('customers');
             $table->decimal('total_price', 20, 2); // 20 = total digits (before + after decimal point), 2 = digits after the decimal point
             $table->string('status', 45);
             $table->timestamps();

@@ -1,10 +1,13 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Customer\AuthController;
 use App\Http\Controllers\Customer\CartController;
+use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Customer\CouponController;
 use App\Http\Controllers\Customer\ForgotPasswordController;
+use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\Customer\WishlistController;
 
@@ -38,5 +41,12 @@ Route::prefix('customer')->group(function () {
 
 
     Route::post('/cart/apply-coupon', [CouponController::class, 'apply']);
+
+    // Checkout
+    Route::post('/checkout', [CheckoutController::class, 'store']);
+
+    // Order
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
   });
 });
