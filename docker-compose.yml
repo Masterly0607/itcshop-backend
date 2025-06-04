@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: laravel-app
     volumes:
-      - ./app:/var/www
+      - ./laravel:/var/www #“Yo Docker, whatever files I change in ./laravel on my computer, also change it live inside the container at /var/www.”
     depends_on:
       - db
 
@@ -29,7 +29,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./app:/var/www
+      - ./laravel:/var/www
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app
