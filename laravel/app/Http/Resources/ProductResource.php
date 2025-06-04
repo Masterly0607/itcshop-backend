@@ -23,8 +23,6 @@ class ProductResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'image' => asset('storage/products/' . $this->image),
-
-
             'price' => $this->price,
             'created_at' => (new DateTime($this->created_at))->format('Y-m-d H:i:s'),
             'updated_at' => (new DateTime($this->updated_at))->format('Y-m-d H:i:s'),
