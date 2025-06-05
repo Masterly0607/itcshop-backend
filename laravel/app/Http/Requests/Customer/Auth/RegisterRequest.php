@@ -24,8 +24,8 @@ class RegisterRequest extends FormRequest
         return [
             'first_name' => 'required|string|max:255',
             'last_name'  => 'required|string|max:255',
-            'email'      => 'required|email|unique:customers,email',
-            'password'   => 'required|confirmed|min:6',
+            'email'      => 'required|email|unique:customers,email', // 	Email must be unique in the customers table, specifically in the email column (no duplicate emails)
+            'password'   => 'required|confirmed|min:6', // confirmed = There must be another field called password_confirmation, and it must match password
             'phone'      => 'nullable|string|max:20',
             'address'    => 'nullable|string|max:255',
         ];

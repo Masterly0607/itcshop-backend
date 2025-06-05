@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProductRequest;
-use App\Http\Resources\ProductListResource;
-use App\Http\Resources\ProductResource;
+use App\Http\Requests\Admin\Product\StoreProductRequest;
+use App\Http\Requests\Admin\Product\UpdateProductRequest;
+use App\Http\Resources\Admin\ProductResource;
 use App\Models\Product;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
+
 
 class ProductController extends Controller
 {
@@ -30,10 +29,10 @@ class ProductController extends Controller
                     ->orWhere('description', 'like', "%{$search}%");
             });
         }
-        return ProductListResource::collection($query->paginate($perPage));
+        return ProductResource::collection($query->paginate($perPage));
     }
 
-    public function store(ProductRequest $request)
+    public function store(StoreProductRequest $request)
     {
         $data = $request->validated();
 
@@ -46,10 +45,14 @@ class ProductController extends Controller
             $data['image_size'] = $image->getSize();
         }
 
+        //  Auto-fill created_by from logged-in admin
+        $data['created_by'] = auth()->id();
+
         $product = Product::create($data);
 
         return new ProductResource($product);
     }
+
 
     /**
      * Display the specified resource.
@@ -62,9 +65,8 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product)
     {
-        // Update logic: safe image upload just like in store()
         $data = $request->validated();
 
         if ($request->hasFile('image')) {
@@ -75,6 +77,10 @@ class ProductController extends Controller
             $data['image_mime'] = $image->getClientMimeType();
             $data['image_size'] = $image->getSize();
         }
+
+        // Auto-fill updated_by from logged-in admin
+        $data['updated_by'] = auth()->id();
+        dd($data['updated_by']);
 
         $product->update($data);
 

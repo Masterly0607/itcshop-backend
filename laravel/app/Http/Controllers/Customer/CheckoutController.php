@@ -8,9 +8,11 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Artisan; // add this at the top if not already
 class CheckoutController extends Controller
 {
+
+
     public function store(Request $request)
     {
         try {
@@ -69,6 +71,9 @@ class CheckoutController extends Controller
             Cart::whereIn('id', $cartItems->pluck('id'))->delete();
 
             DB::commit();
+
+            // Update flags after successful order
+            Artisan::call('products:update-flags');
 
             return response()->json([
                 'message'  => 'Checkout successful',

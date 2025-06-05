@@ -14,6 +14,8 @@ use App\Http\Controllers\Customer\WishlistController;
 
 Route::prefix('customer')->group(function () {
   Route::post('/register', [AuthController::class, 'register']);
+  Route::post('/resend-otp', [AuthController::class, 'resendOtp']);
+
   Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
   Route::post('/login', [AuthController::class, 'login']);
 
