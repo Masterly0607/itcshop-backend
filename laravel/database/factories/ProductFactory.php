@@ -23,7 +23,6 @@ class ProductFactory extends Factory
             'flash_sale_start' => $isFlashSale ? now()->subDays(rand(0, 2)) : null,
             'flash_sale_end' => $isFlashSale ? now()->addDays(rand(1, 5)) : null,
             'is_best_selling' => $this->faker->boolean(20),
-            'is_new' => $this->faker->boolean(50),
             'category_id' => Category::inRandomOrder()->first()?->id,
             'created_by' => 1,
             'updated_by' => 1,

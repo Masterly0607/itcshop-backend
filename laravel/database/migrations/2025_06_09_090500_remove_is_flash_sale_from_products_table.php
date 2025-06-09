@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('countries', function (Blueprint $table) {
-            $table->string('code', 3)->primary(); // e.g., US, KH, VN
-            $table->string('name', 100);
-            $table->timestamps();
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('is_flash_sale');
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('countries');
+        Schema::table('products', function (Blueprint $table) {
+            $table->boolean('is_flash_sale')->default(false); // Optional: Add back if rolled back
+        });
     }
 };

@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('is_admin')->default(false);
+        Schema::table('carts', function (Blueprint $table) {
+            $table->string('coupon_code')->nullable()->after('quantity');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-           $table->dropColumn('is_admin');
+        Schema::table('carts', function (Blueprint $table) {
+            $table->dropColumn('coupon_code');
         });
     }
 };

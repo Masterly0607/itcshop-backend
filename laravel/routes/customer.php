@@ -14,6 +14,7 @@ use App\Http\Controllers\Customer\StripePaymentController;
 use App\Http\Controllers\Customer\PaymentMethodController;
 use App\Http\Controllers\Customer\WishlistController;
 
+
 Route::prefix('customer')->group(function () {
   // Public auth
   Route::post('/register', [AuthController::class, 'register']);
@@ -74,10 +75,10 @@ Route::prefix('customer')->group(function () {
     });
 
 
-    // 🔹 For Stripe.js flow (one-time card entry)
+    //  For Stripe.js flow (one-time card entry)
     Route::post('/stripe/payment-intent', [StripePaymentController::class, 'createPaymentIntent']);
 
-    // 🔹 For saved card payment
+    //  For saved card payment
     Route::post('/stripe/charge', [StripePaymentController::class, 'payWithSavedCard']);
   });
 });

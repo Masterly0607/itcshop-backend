@@ -27,7 +27,6 @@ class Product extends Model
         'flash_sale_start',
         'flash_sale_end',
         'is_best_selling',
-        'is_new',
         'created_by',
         'updated_by',
     ];

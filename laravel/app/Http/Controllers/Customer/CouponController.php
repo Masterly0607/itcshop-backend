@@ -47,12 +47,17 @@ class CouponController extends Controller
 
         $discount = 0;
         if ($coupon->type === 'fixed') {
-            $discount = $coupon->value;
+            $discount = min($coupon->value, $subtotal); //  cap discount
         } elseif ($coupon->type === 'percent') {
             $discount = $subtotal * ($coupon->value / 100);
         }
 
         $total = max($subtotal - $discount, 0);
+
+        // Save coupon_code to all cart rows for that customer
+        Cart::where('customer_id', $customerId)->update([
+            'coupon_code' => $coupon->code,
+        ]);
 
         return response()->json([
             'message'  => 'Coupon applied successfully',

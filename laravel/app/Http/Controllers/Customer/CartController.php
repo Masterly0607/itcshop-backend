@@ -18,7 +18,6 @@ class CartController extends Controller
 
         return CartResource::collection($cart);
     }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -28,29 +27,22 @@ class CartController extends Controller
 
         $customerId = $request->user()->id;
 
-        // Check if product already exists
-        $exists = Cart::where('customer_id', $customerId)
-            ->where('product_id', $request->product_id)
-            ->exists();
-
-        if ($exists) {
-            return response()->json([
-                'message' => 'Product is already in your cart'
-            ], 409); // 409 = Conflict
-        }
-
-        // Create new cart item
-        $cartItem = Cart::create([
+        // 🔁 Find existing or create new cart item
+        $cartItem = Cart::firstOrNew([
             'customer_id' => $customerId,
             'product_id'  => $request->product_id,
-            'quantity'    => $request->quantity,
         ]);
+
+        // ✅ Merge quantity instead of blocking
+        $cartItem->quantity += $request->quantity;
+        $cartItem->save();
 
         return response()->json([
             'message' => 'Product added to cart successfully',
             'data'    => new CartResource($cartItem),
         ]);
     }
+
 
 
 

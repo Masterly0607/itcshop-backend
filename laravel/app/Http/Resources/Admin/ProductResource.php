@@ -29,7 +29,6 @@ class ProductResource extends JsonResource
             'flash_sale_start' => $this->flash_sale_start,
             'flash_sale_end' => $this->flash_sale_end,
             'is_best_selling' => (bool) $this->is_best_selling,
-            'is_new' => (bool) $this->is_new,
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
         ];

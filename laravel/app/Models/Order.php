@@ -21,4 +21,9 @@ class Order extends Model
     {
         return $this->belongsTo(Product::class);
     }
+    // Relationship: customer who placed the order
+    public function customer()
+    {
+        return $this->belongsTo(\App\Models\Customer::class);
+    }
 }
