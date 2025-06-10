@@ -7,6 +7,7 @@ use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Customer\CouponController;
 use App\Http\Controllers\Customer\ForgotPasswordController;
+use App\Http\Controllers\Customer\GoogleAuthController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\ProductViewController;
 use App\Http\Controllers\Customer\ProfileController;
@@ -35,6 +36,10 @@ Route::prefix('customer')->group(function () {
     Route::get('/new', [ProductViewController::class, 'newProducts']);
     Route::get('/{categoryName}', [ProductViewController::class, 'byCategoryName']);
   });
+
+  Route::get('/auth/redirect/google', [GoogleAuthController::class, 'redirect']);
+  Route::get('/auth/callback/google', [GoogleAuthController::class, 'callback']);
+
 
   // Authenticated routes
   Route::middleware('auth:sanctum')->group(function () {
