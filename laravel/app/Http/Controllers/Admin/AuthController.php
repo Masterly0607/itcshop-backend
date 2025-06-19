@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\Admin\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,12 +31,7 @@ class AuthController extends Controller
     //  Check if the user is admin!
     // Auth::user() = It returns the currently authenticated user object. Ex: {"id": 1,  "name": "Sok Masterly",  "email": "sok@example.com",}
     $user = Auth::user();
-    if (!$user->is_admin) {
-      Auth::logout();
-      return response([
-        'message' => "You don't have permission to authenicate as admin."
-      ]);
-    }
+
 
     //  If everthing is fine, create new token for user
     $token = $user->createToken('main')->plainTextToken;

@@ -21,10 +21,11 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('otp')->nullable();
             $table->timestamp('otp_expires_at')->nullable();
+            $table->string('stripe_customer_id')->nullable();
 
             $table->string('password');
             $table->string('phone')->nullable();
-            $table->string('status', 45)->nullable();
+
             $table->boolean('is_verified')->default(false);
 
             $table->timestamps();

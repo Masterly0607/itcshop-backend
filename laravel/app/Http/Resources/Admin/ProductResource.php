@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Admin;
 
 use DateTime;
 use Illuminate\Http\Request;
@@ -22,14 +22,15 @@ class ProductResource extends JsonResource
             'title' => $this->title,
             'slug' => $this->slug,
             'description' => $this->description,
-            'image' => asset('storage/products/' . $this->image),
-
-
             'price' => $this->price,
-            'created_at' => (new DateTime($this->created_at))->format('Y-m-d H:i:s'),
-            'updated_at' => (new DateTime($this->updated_at))->format('Y-m-d H:i:s'),
-
-
+            'image' => $this->image ? url($this->image) : null,
+            'category_id' => $this->category_id,
+            'is_flash_sale' => (bool) $this->is_flash_sale,
+            'flash_sale_start' => $this->flash_sale_start,
+            'flash_sale_end' => $this->flash_sale_end,
+            'is_best_selling' => (bool) $this->is_best_selling,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
         ];
     }
 }

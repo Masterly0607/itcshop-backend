@@ -24,5 +24,5 @@ class Customer extends Authenticatable
 
     protected $hidden = [
         'password',
-    ];
+    ]; // It hides the password field when returning the model as JSON. You don’t want to send passwords to the frontend or expose them in API data, even if they’re hashed.
 }

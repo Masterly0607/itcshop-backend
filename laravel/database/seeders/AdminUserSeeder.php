@@ -20,7 +20,7 @@ class AdminUserSeeder extends Seeder
             'email' =>'admin@example.com',
             'email_verified_at' => now(),
             'password' => bcrypt('admin123'),
-            'is_admin' => true
+    
         ]);
     }
 }

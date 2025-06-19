@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained();
             $table->foreignId('product_id')->constrained();
             $table->integer('quantity');
-            $table->decimal('unit_price'); // unit_price = one product price
+            $table->decimal('unit_price', 10, 2);
+            // unit_price = one product price
             $table->decimal('subtotal', 10, 2);  // subtotal = price * quantity, total = subtotal + (shipping or discount
             $table->timestamps();
         });

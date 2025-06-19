@@ -3,11 +3,11 @@ version: "3.8"
 services:
   app:
     build:
-      context: .
+      context: ./laravel # Point to the laravel folder (where Dockerfile lives)
       dockerfile: Dockerfile
     container_name: laravel-app
     volumes:
-      - ./laravel:/var/www #“Yo Docker, whatever files I change in ./laravel on my computer, also change it live inside the container at /var/www.”
+      - ./laravel:/var/www
     depends_on:
       - db
 

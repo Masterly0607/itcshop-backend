@@ -16,12 +16,16 @@ class Product extends Model
     use SoftDeletes; //  The record is not actually removed from the database. Instead, Laravel sets a deleted_at timestamp like: deleted_at = "2025-05-19 11:35:00". So it's "hidden" from your app, but still exists in the table. If u get all products in api, it won't see.
     protected $fillable = [
         'title',
+        'slug',
         'description',
         'price',
-        'image',
-        'image_mime',
-        'image_size',
+        'category_id',
+        'flash_sale_start',
+        'flash_sale_end',
+        'created_by',
+        'updated_by',
     ];
+
 
 
     public function getSlugOptions(): SlugOptions
@@ -32,4 +36,13 @@ class Product extends Model
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
     }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+    public function images()
+{
+    return $this->hasMany(ProductImage::class);
+}
+
 }
