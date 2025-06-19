@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Customer\ProductDetailResource;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\OrderItem;
 use App\Http\Resources\Customer\ProductResource;
-use Illuminate\Support\Str;
-
 
 class ProductViewController extends Controller
 {
@@ -36,8 +35,6 @@ class ProductViewController extends Controller
     {
         $now = now()->toDateString(); // only keep date, e.g. "2025-06-09"
 
-
-
         $products = Product::whereDate('flash_sale_start', '<=', $now)
             ->whereDate('flash_sale_end', '>=', $now)
             ->with('category')
@@ -47,7 +44,6 @@ class ProductViewController extends Controller
 
         return ProductResource::collection($products);
     }
-
 
     // Best selling products (based on order_items)
     public function bestSelling()
@@ -77,20 +73,10 @@ class ProductViewController extends Controller
         return ProductResource::collection($products);
     }
 
-    // Products by category name (supports search as query param)
-    public function byCategoryName(Request $request, $categoryName)
+    // ✅ Product detail by ID
+    public function show($id)
     {
-        $category = Category::where('slug', Str::slug($categoryName))->firstOrFail();
-
-        $query = Product::where('category_id', $category->id)
-            ->with('category');
-
-        if ($search = $request->query('search')) {
-            $normalized = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $search));
-            $query->whereRaw("REPLACE(REPLACE(LOWER(title), ' ', ''), '-', '') LIKE ?", ["%{$normalized}%"]);
-        }
-
-        $products = $query->latest()->paginate(12);
-        return ProductResource::collection($products);
+        $product = Product::with(['category', 'images'])->findOrFail($id);
+        return new ProductDetailResource($product);
     }
 }

@@ -38,9 +38,9 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('/users', UserController::class);
     Route::apiResource('/customers', CustomerController::class);
     Route::apiResource('/coupons', CouponController::class);
-    Route::patch('/coupons/{id}', [CouponController::class, 'update']);
+
 
     Route::apiResource('/orders', OrderController::class)->only(['index', 'show']);
-    Route::put('/orders/{id}/status', [OrderController::class, 'updateStatus']);
+ 
   });
 });

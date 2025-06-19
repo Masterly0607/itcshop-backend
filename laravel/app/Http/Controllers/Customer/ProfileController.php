@@ -39,10 +39,10 @@ class ProfileController extends Controller
         $user->password = Hash::make($data['new_password']);
         $user->save();
 
-        // ✅ Revoke all old tokens (logout everywhere)
+        //  Revoke all old tokens (logout everywhere)
         $user->tokens()->delete();
 
-        // ✅ Create new token to auto-login (optional)
+        // Create new token to auto-login (optional)
         $newToken = $user->createToken('customer-token')->plainTextToken;
 
         return response()->json([

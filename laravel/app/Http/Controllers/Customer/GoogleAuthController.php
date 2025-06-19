@@ -44,7 +44,7 @@ class GoogleAuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // ✅ return JSON response (Option 1 standard)
+        // return JSON response (Option 1 standard)
         return redirect("http://localhost:5173/auth/google-success?token=$token");
     }
 }

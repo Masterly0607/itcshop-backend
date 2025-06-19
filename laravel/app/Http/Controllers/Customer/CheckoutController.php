@@ -10,7 +10,7 @@ use App\Models\OrderItem;
 use App\Models\Coupon;
 use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Artisan;
+
 
 class CheckoutController extends Controller
 {
@@ -43,27 +43,30 @@ class CheckoutController extends Controller
             $subtotal = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
 
             // Auto apply coupon
-            $couponCode = $cartItems->first()?->coupon_code;
-            $discount = 0;
+// Auto apply coupon
+$couponCode = $cartItems->firstWhere('coupon_code', '!=', null)?->coupon_code;
+$discount = 0;
+$coupon = null;
 
-            if ($couponCode) {
-                $coupon = Coupon::where('code', $couponCode)
-                    ->where('is_active', true)
-                    ->where(function ($q) {
-                        $q->whereNull('start_date')->orWhere('start_date', '<=', now());
-                    })
-                    ->where(function ($q) {
-                        $q->whereNull('end_date')->orWhere('end_date', '>=', now());
-                    })
-                    ->first();
+if ($couponCode) {
+    $coupon = Coupon::where('code', $couponCode)
+        ->where(function ($q) {
+            $q->whereNull('expires_at')->orWhere('expires_at', '>=', now());
+        })
+        ->first();
 
-                if ($coupon && ($coupon->usage_limit === null || $coupon->used < $coupon->usage_limit)) {
-                    $discount = $coupon->type === 'fixed'
-                        ? min($coupon->value, $subtotal)
-                        : $subtotal * ($coupon->value / 100);
-                    $coupon->increment('used');
-                }
-            }
+    if ($coupon && ($coupon->usage_limit === null || $coupon->used < $coupon->usage_limit)) {
+        if ($subtotal < $coupon->min_order_amount) {
+            $coupon = null; // don't apply if not enough order value
+        } else {
+            $discount = $coupon->discount_type === 'fixed'
+                ? min($coupon->discount_value, $subtotal)
+                : $subtotal * ($coupon->discount_value / 100);
+            $coupon->increment('used');
+        }
+    }
+}
+
 
             $total = max($subtotal - $discount, 0);
 

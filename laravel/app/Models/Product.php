@@ -19,14 +19,9 @@ class Product extends Model
         'slug',
         'description',
         'price',
-        'image',
-        'image_mime',
-        'image_size',
         'category_id',
-        'is_flash_sale',
         'flash_sale_start',
         'flash_sale_end',
-        'is_best_selling',
         'created_by',
         'updated_by',
     ];
@@ -45,4 +40,9 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+    public function images()
+{
+    return $this->hasMany(ProductImage::class);
+}
+
 }

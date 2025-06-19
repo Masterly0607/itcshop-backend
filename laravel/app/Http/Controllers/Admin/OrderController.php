@@ -8,34 +8,36 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    // View all orders
-    public function index()
-    {
-        $orders = Order::with('customer', 'items.product')->latest()->get();
-        return response()->json($orders);
-    }
+  public function index()
+{
+    return Order::with(['customer', 'items.product'])->latest()->get();
+}
 
-    // View single order
-    public function show($id)
-    {
-        $order = Order::with('customer', 'items.product')->findOrFail($id);
-        return response()->json($order);
-    }
+   public function show(Order $order)
+{
+    return $order->load(['customer', 'items.product']);
+}
 
-    // Update order status (processing, shipped, delivered, etc.)
-    public function updateStatus(Request $request, $id)
+    public function update(Request $request, Order $order)
     {
-        $request->validate([
-            'status' => 'required|in:pending,processing,shipped,delivered,cancelled',
+        $data = $request->validate([
+            'status' => ['required', 'string'],
         ]);
 
-        $order = Order::findOrFail($id);
-        $order->status = $request->status;
-        $order->save();
+        $data['updated_by'] = auth()->id();
+
+        $order->update($data);
 
         return response()->json([
-            'message' => 'Order status updated',
-            'data' => $order
+            'message' => 'Order updated',
+            'data' => $order,
         ]);
+    }
+
+    public function destroy(Order $order)
+    {
+        $order->delete();
+
+        return response()->json(['message' => 'Order deleted']);
     }
 }

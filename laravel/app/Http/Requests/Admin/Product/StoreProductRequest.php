@@ -14,14 +14,15 @@ class StoreProductRequest extends FormRequest
   public function rules(): array
   {
     return [
-      'title' => ['required', 'max:2000'],
-      'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
-      'price' => ['required', 'numeric'],
-      'description' => ['nullable', 'string'],
-      'flash_sale_start' => ['nullable', 'date'],
-      'flash_sale_end' => ['nullable', 'date', 'after_or_equal:flash_sale_start'],
-      'is_flash_sale' => ['nullable', 'boolean'],
-      'category_id' => ['nullable', 'exists:categories,id'],
-    ];
+    'title' => ['required', 'max:2000'],
+    'images' => ['nullable', 'array'], // allow multiple files
+    'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'], // validate each file
+    'price' => ['required', 'numeric'],
+    'description' => ['nullable', 'string'],
+    'flash_sale_start' => ['nullable', 'date'],
+    'flash_sale_end' => ['nullable', 'date', 'after_or_equal:flash_sale_start'],
+    'is_flash_sale' => ['nullable', 'boolean'],
+    'category_id' => ['nullable', 'exists:categories,id'],
+  ];
   }
 }

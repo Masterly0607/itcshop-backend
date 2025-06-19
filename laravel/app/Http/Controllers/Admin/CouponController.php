@@ -2,70 +2,55 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Coupon;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\Coupon\StoreCouponRequest;
+use App\Http\Requests\Admin\Coupon\UpdateCouponRequest ;
+use App\Models\Coupon;
+
 
 class CouponController extends Controller
 {
+    // Create coupon
+    public function store(StoreCouponRequest $request)
+    {
+        $coupon = Coupon::create($request->validated());
+
+        return response()->json([
+            'message' => 'Coupon created successfully.',
+            'data' => $coupon,
+        ], 201);
+    }
+
+    // Get all coupons
     public function index()
     {
-        return Coupon::all();
+        return Coupon::latest()->get();
     }
 
-    public function store(Request $request)
+    // Get single coupon
+    public function show(Coupon $coupon)
     {
-        $data = $request->validate([
-            'code'         => 'required|string|unique:coupons,code',
-            'type'         => 'required|in:fixed,percent',
-            'value'        => 'required|numeric|min:0.01',
-            'usage_limit'  => 'nullable|integer|min:1',
-            'start_date'   => 'nullable|date',
-            'end_date'     => 'nullable|date|after_or_equal:start_date',
-            'is_active'    => 'boolean',
-        ]);
+        return response()->json($coupon);
+    }
 
-        $coupon = Coupon::create($data);
+    // Update coupon
+    public function update(UpdateCouponRequest $request, Coupon $coupon)
+    {
+        $coupon->update($request->validated());
 
         return response()->json([
-            'message' => 'Coupon created successfully',
-            'data'    => $coupon,
+            'message' => 'Coupon updated successfully.',
+            'data' => $coupon,
         ]);
     }
 
-    public function show($id)
+    // Delete coupon
+    public function destroy(Coupon $coupon)
     {
-        return Coupon::findOrFail($id);
-    }
-
-    public function update(Request $request, $id)
-    {
-        $coupon = Coupon::findOrFail($id);
-
-        $data = $request->validate([
-            'code'        => 'sometimes|required|string|unique:coupons,code,' . $id,
-            'type'        => 'sometimes|required|in:fixed,percent',
-            'value'       => 'sometimes|required|numeric|min:0.01',
-            'usage_limit' => 'sometimes|nullable|integer|min:1',
-            'start_date'  => 'sometimes|nullable|date',
-            'end_date'    => 'sometimes|nullable|date|after_or_equal:start_date',
-            'is_active'   => 'sometimes|boolean',
-        ]);
-
-        $coupon->update($data);
+        $coupon->delete();
 
         return response()->json([
-            'message' => 'Coupon updated successfully',
-            'data'    => $coupon,
+            'message' => 'Coupon deleted successfully.',
         ]);
-    }
-
-    public function destroy($id)
-    {
-        Coupon::findOrFail($id)->delete();
-
-        return response()->json([
-            'message' => 'Coupon deleted successfully'
-        ]);
-    }
+}
 }
