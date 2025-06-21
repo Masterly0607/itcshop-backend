@@ -40,7 +40,8 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('/coupons', CouponController::class);
 
 
-    Route::apiResource('/orders', OrderController::class)->only(['index', 'show']);
+Route::apiResource('/orders', OrderController::class)->only(['index', 'show', 'update']);
+
  
   });
 });

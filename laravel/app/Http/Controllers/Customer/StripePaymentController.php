@@ -18,49 +18,61 @@ class StripePaymentController extends Controller
     }
 
     /**
-     * 1️⃣ Create a Stripe PaymentIntent (one-time card entry via Stripe.js)
+     * 1️ Create a Stripe PaymentIntent (one-time card entry via Stripe.js)
      */
-    public function createPaymentIntent(Request $request)
-    {
-        $request->validate([
-            'amount' => 'required|numeric|min:100', // Amount in cents (e.g., 100 = $1.00)
-        ]);
+    public function createPaymentIntent(Request $request) // PaymentIntent = The order / recipe in Stripe
+{
+    $customer = $request->user();
 
-        $customer = $request->user();
-        $amountInDollars = $request->amount / 100;
+    //  Get cart items for this customer
+    $cartItems = $customer->carts()->with('product')->get();
 
-        // Step 1: Create the Order
-        $order = Order::create([
-            'customer_id'  => $customer->id,
-            'total_price'  => $amountInDollars,
-            'status'       => 'pending',
-            'code'         => $request->input('coupon_code', null),
-        ]);
-
-        // Step 2: Create Stripe PaymentIntent
-        $paymentIntent = PaymentIntent::create([
-            'amount'   => (int) $request->amount,
-            'currency' => 'usd',
-            'payment_method_types' => ['card'],
-        ]);
-
-        // Step 3: Log Payment (Pending)
-        Payment::create([
-            'order_id'   => $order->id,
-            'amount'     => $amountInDollars,
-            'status'     => 'pending',
-            'type'       => 'stripe',
-            'created_by' => $customer->id,
-        ]);
-
-        return response()->json([
-            'client_secret' => $paymentIntent->client_secret,
-            'order_id'      => $order->id,
-        ]);
+    if ($cartItems->isEmpty()) {
+        return response()->json(['message' => 'Cart is empty'], 400);
     }
 
+    //  Calculate total
+    $total = 0;
+    foreach ($cartItems as $item) {
+        $total += $item->product->price * $item->quantity;
+    }
+
+    //  Convert to cents
+    $amountInCents = (int) ($total * 100);
+
+    //  Create Order
+    $order = Order::create([
+        'customer_id' => $customer->id,
+        'total_price' => $total,
+        'status'      => 'pending',
+        'code'        => $request->input('coupon_code', null),
+    ]);
+
+    //  Create Stripe PaymentIntent
+    $paymentIntent = PaymentIntent::create([
+        'amount'               => $amountInCents,
+        'currency'             => 'usd',
+        'payment_method_types' => ['card'],
+    ]);
+
+    //  Log Payment (Pending)
+    Payment::create([
+        'order_id'   => $order->id,
+        'amount'     => $total,
+        'status'     => 'pending',
+        'type'       => 'stripe',
+        'created_by' => $customer->id,
+    ]);
+
+    return response()->json([
+        'client_secret' => $paymentIntent->client_secret, // client_secret = The permission to pay it from frontend
+        'order_id'      => $order->id,
+    ]);
+}
+
+
     /**
-     * 2️⃣ Update Stripe payment status (used in webhook or after confirmation)
+     * 2️ Update Stripe payment status (used in webhook or after confirmation)
      */
     public function updateStatus(Request $request)
     {
@@ -77,44 +89,54 @@ class StripePaymentController extends Controller
     }
 
     /**
-     * 3️⃣ Charge a saved card (off-session payment)
+     * 3️ Charge a saved card (off-session payment)
      */
-    public function payWithSavedCard(Request $request)
-    {
-        $request->validate([
-            'card_id'   => 'required|integer',
-            'amount'    => 'required|numeric|min:100',
-            'order_id'  => 'required|exists:orders,id',
-        ]);
+public function payWithSavedCard(Request $request)
+{
+    $request->validate([
+        'card_id'   => 'required|integer',
+        'order_id'  => 'required|exists:orders,id',
+    ]);
 
-        $customer = $request->user();
+    $customer = $request->user();
 
-        // Step 1: Get saved card for this customer
-        $card = CustomerCard::where('id', $request->card_id)
-            ->where('customer_id', $customer->id)
-            ->firstOrFail();
+    //  Get saved card
+    $card = CustomerCard::where('id', $request->card_id)
+        ->where('customer_id', $customer->id)
+        ->firstOrFail();
 
-        // Step 2: Charge card using Stripe
-        $paymentIntent = PaymentIntent::create([
-            'amount'         => (int) $request->amount,
-            'currency'       => 'usd',
-            'customer'       => $customer->stripe_customer_id,
-            'payment_method' => $card->stripe_card_id,
-            'off_session'    => true,
-            'confirm'        => true,
-        ]);
+    //  Get order and calculate amount in cents
+    $order = Order::findOrFail($request->order_id);
+    $amount = (int) ($order->total_price * 100); // Convert dollars to cents
 
-        // Step 3: Log payment
-        Payment::create([
-            'order_id'   => $request->order_id,
-            'amount'     => $request->amount / 100,
-            'status'     => $paymentIntent->status,
-            'type'       => 'stripe',
-            'created_by' => $customer->id,
-        ]);
+    //  Charge card using Stripe
+    $paymentIntent = PaymentIntent::create([
+        'amount'         => $amount,
+        'currency'       => 'usd',
+        'customer'       => $customer->stripe_customer_id,
+        'payment_method' => $card->stripe_card_id,
+        'off_session'    => true,
+        'confirm'        => true,
+    ]);
 
-        return response()->json([
-            'status' => $paymentIntent->status,
-        ]);
+    // Log payment
+    Payment::create([
+        'order_id'   => $order->id,
+        'amount'     => $order->total_price,
+        'status'     => $paymentIntent->status,
+        'type'       => 'stripe',
+        'created_by' => $customer->id,
+    ]);
+
+    // Also update order status to 'completed'
+    if ($paymentIntent->status === 'succeeded') {
+        $order->update(['status' => 'completed']);
     }
+
+    return response()->json([
+        'status' => $paymentIntent->status,
+    ]);
+}
+
+
 }

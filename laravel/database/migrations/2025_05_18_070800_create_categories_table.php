@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();         // Category name (e.g., "Shoes", "Electronics")
             $table->string('slug')->unique();         // URL-friendly name (e.g., "men-shoes")
-            $table->text('description')->nullable();  // Optional description
             $table->timestamps();
         });
     }
