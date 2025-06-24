@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Customer\CartResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\Cart;
-use App\Http\Resources\CartResource;
+
 
 class CartController extends Controller
 {
