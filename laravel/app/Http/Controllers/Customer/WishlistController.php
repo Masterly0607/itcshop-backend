@@ -3,15 +3,23 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Customer\ProductResource;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
 
 class WishlistController extends Controller
 {
-    public function index(Request $request)
+        public function index(Request $request)
     {
-        $wishlist = Wishlist::with('product')->where('customer_id', $request->user()->id)->get();
-        return response()->json($wishlist);
+        $wishlists = Wishlist::with('product.images', 'product.category')
+            ->where('customer_id', $request->user()->id)
+            ->get();
+
+        $products = $wishlists->pluck('product')->filter();
+
+        return response()->json([
+            'data' => ProductResource::collection($products),
+        ]);
     }
 
     public function store(Request $request)
@@ -33,11 +41,14 @@ class WishlistController extends Controller
         return response()->json(['message' => 'Added to wishlist', 'data' => $item]);
     }
 
-    public function destroy(Request $request, $id)
-    {
-        $item = Wishlist::where('id', $id)->where('customer_id', $request->user()->id)->firstOrFail();
-        $item->delete();
+public function destroy(Request $request, $id)
+{
+    $item = Wishlist::where('product_id', $id) 
+        ->where('customer_id', $request->user()->id)
+        ->firstOrFail();
 
-        return response()->json(['message' => 'Removed from wishlist']);
-    }
+    $item->delete();
+
+    return response()->json(['message' => 'Removed from wishlist']);
+}
 }
