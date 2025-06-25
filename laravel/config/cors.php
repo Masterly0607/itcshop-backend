@@ -3,9 +3,11 @@
 return [
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
     'allowed_methods' => ['*'],
-  'allowed_origins' => [
+'allowed_origins' => [
     'http://localhost:5173',
-    'https://localhost:5174',
+    'http://localhost:5174',
+    'https://itcshop-customer.netlify.app', 
+    'https://itcshop-admin.netlify.app',
 ],
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
