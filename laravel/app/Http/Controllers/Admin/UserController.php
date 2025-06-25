@@ -9,17 +9,17 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
-    {
-        return User::all();
-    }
+  public function index()
+{
+    return User::orderBy('id', 'desc')->get();
+}
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6'
+            'password' => 'required|min:6|confirmed'
         ]);
         return User::create([
             'name' => $request->name,

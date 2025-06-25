@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\Admin\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Customer\{
     AuthController,
@@ -72,7 +72,7 @@ Route::prefix('customer')->group(function () {
         // Orders
         Route::get('/orders', [OrderController::class, 'index']);
         Route::get('/orders/{id}', [OrderController::class, 'show']);
-
+  Route::get('/categories', [CategoryController::class, 'index']);
         //  Stripe Saved Cards (Wallet)
         Route::prefix('cards')->controller(PaymentMethodController::class)->group(function () {
             Route::get('/', 'index');       // GET customer/cards
