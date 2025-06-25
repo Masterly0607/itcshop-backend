@@ -42,6 +42,7 @@ Route::prefix('admin')->group(function () {
 
 Route::apiResource('/orders', OrderController::class)->only(['index', 'show', 'update']);
 
+
  
   });
 });
