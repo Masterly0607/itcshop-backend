@@ -3,13 +3,18 @@ version: "3.8"
 services:
   app:
     build:
-      context: ./laravel # Point to the laravel folder (where Dockerfile lives)
+      context: ./laravel
       dockerfile: Dockerfile
     container_name: laravel-app
+    working_dir: /var/www
     volumes:
       - ./laravel:/var/www
     depends_on:
       - db
+    ports:
+      - "9000:9000"
+    command: |
+      sh -c "chmod -R 777 /var/www/storage /var/www/bootstrap/cache && php-fpm"
 
   db:
     image: mysql:8.0
