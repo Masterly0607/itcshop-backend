@@ -9,6 +9,7 @@ use App\Http\Resources\Customer\CustomerResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use App\Jobs\SendCustomerOtpEmail;
 use App\Models\Customer;
 use App\Models\CustomerOtp;
 
@@ -84,9 +85,8 @@ class AuthController extends Controller
         ]);
 
         // Send OTP email
-        Mail::raw("Your OTP code is: $otp", function ($message) use ($request) {
-            $message->to($request->email)->subject('Your OTP Code');
-        });
+      SendCustomerOtpEmail::dispatch($data['email'], $otp);
+
 
         return response()->json([
             'message' => 'OTP resent to your email.',
