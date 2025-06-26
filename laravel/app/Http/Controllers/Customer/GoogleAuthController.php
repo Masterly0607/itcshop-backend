@@ -42,24 +42,22 @@ class GoogleAuthController extends Controller
                 'email'       => $googleUser->getEmail(),
                 'password'    => bcrypt(Str::random(24)),
                 'google_id'   => $googleUser->getId(),
-                'is_verified' => true,
+                'is_verified' => 1,
                 'phone'       => '',
                 'address'     => '',
             ]);
         } else {
-            // ✅ Always set is_verified and save (even if google_id exists)
-            if (!$user->google_id) {
-                $user->google_id = $googleUser->getId();
-            }
-
-            $user->is_verified = true;
-            $user->save();
+            // ✅ Always force update google_id and is_verified
+            $user->forceFill([
+                'google_id'   => $user->google_id ?? $googleUser->getId(),
+                'is_verified' => 1,
+            ])->save();
         }
 
         // ✅ Create token
         $token = $user->createToken('customer-token')->plainTextToken;
 
-        // ✅ Redirect to frontend
+        // ✅ Redirect to frontend with token
         return redirect("https://itcshop-customer.netlify.app/auth/google-success?token=$token");
     }
 }
