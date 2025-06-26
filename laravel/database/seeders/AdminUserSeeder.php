@@ -16,10 +16,10 @@ class AdminUserSeeder extends Seeder
         // A seeder is a file that lets you insert fake or default data into your database automatically.
         // Insert data to user model
         User::create([
-            'name' =>'Admin',
-            'email' =>'admin@example.com',
+            'name' =>'MasteryAdmin',
+            'email' =>'masterlyadmin@example.com',
             'email_verified_at' => now(),
-            'password' => bcrypt('admin123'),
+            'password' => bcrypt('masterly123'),
     
         ]);
     }
