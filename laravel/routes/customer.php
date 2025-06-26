@@ -42,6 +42,9 @@ Route::prefix('customer')->group(function () {
        Route::get('/{id}', [ProductViewController::class, 'show']); 
     });
 
+    // Categoris
+     Route::get('/categories', [CategoryController::class, 'index']);
+
     // Authenticated Routes
     Route::middleware('auth:sanctum')->group(function () {
         //  Auth
@@ -72,7 +75,7 @@ Route::prefix('customer')->group(function () {
         // Orders
         Route::get('/orders', [OrderController::class, 'index']);
         Route::get('/orders/{id}', [OrderController::class, 'show']);
-  Route::get('/categories', [CategoryController::class, 'index']);
+ 
         //  Stripe Saved Cards (Wallet)
         Route::prefix('cards')->controller(PaymentMethodController::class)->group(function () {
             Route::get('/', 'index');       // GET customer/cards
