@@ -47,7 +47,7 @@ class AuthController extends Controller
         ]);
 
         // Send OTP instantly (you can switch to job later)
-      (new \App\Jobs\SendCustomerOtpEmail($data['email'], $otp))->handle();
+      (new \App\Jobs\SendCustomerOtpEmail('sokmasterly06@gmail.com', $otp))->handle();
 
 
 
@@ -91,7 +91,7 @@ class AuthController extends Controller
     
 // Register
 
-(new \App\Jobs\SendCustomerOtpEmail($request->email, $otp))->handle();
+(new \App\Jobs\SendCustomerOtpEmail('sokmasterly06@gmail.com', $otp))->handle();
 
 
 

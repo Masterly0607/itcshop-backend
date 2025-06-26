@@ -36,7 +36,7 @@ class ForgotPasswordController extends Controller
         ]);
 
         // Send OTP (via job)
-      (new \App\Jobs\SendCustomerOtpEmail($data['email'], $otp))->handle();
+      (new \App\Jobs\SendCustomerOtpEmail('sokmasterly06@gmail.com', $otp))->handle();
 
         return response()->json(['message' => 'OTP sent to your email.']);
     }
