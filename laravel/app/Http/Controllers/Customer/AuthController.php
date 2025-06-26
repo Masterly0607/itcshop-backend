@@ -89,7 +89,9 @@ class AuthController extends Controller
         // Send with queue
     
 // Register
-(new \App\Jobs\SendCustomerOtpEmail('sokmasterlychanon06@gmail.com', $otp))->handle();
+
+(new \App\Jobs\SendCustomerOtpEmail($request->email, $otp))->handle();
+
 
 
 
