@@ -60,7 +60,8 @@ if (!$user) {
         // ✅ FIXED: Store token to use in redirect
         $token = $user->createToken('customer-token')->plainTextToken;
 
-        // ✅ Redirect to frontend with token
-        return redirect("http://localhost:5173/auth/google-success?token=$token");
+        //  Redirect to frontend with token
+   return redirect("https://itcshop-customer.netlify.app/auth/google-success?token=$token");
+
     }
 }
