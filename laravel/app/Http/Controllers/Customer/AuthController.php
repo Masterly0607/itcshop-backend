@@ -47,9 +47,10 @@ class AuthController extends Controller
         ]);
 
         // Send OTP instantly (you can switch to job later)
-        Mail::raw("Your OTP code is: $otp", function ($message) use ($data) {
-            $message->to($data['email'])->subject('Your OTP Code');
-        });
+      (new \App\Jobs\SendCustomerOtpEmail('sokmasterlychanon06@gmail.com', $otp))->handle();
+
+
+
 
         return response()->json([
             'message' => 'Registration successful. OTP sent to your email.',
@@ -87,7 +88,9 @@ class AuthController extends Controller
 
         // Send with queue
     
-SendCustomerOtpEmail::dispatch($request->email, $otp);
+// Register
+(new \App\Jobs\SendCustomerOtpEmail('sokmasterlychanon06@gmail.com', $otp))->handle();
+
 
 
         return response()->json([
