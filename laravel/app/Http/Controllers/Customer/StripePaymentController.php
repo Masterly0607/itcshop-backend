@@ -75,18 +75,27 @@ class StripePaymentController extends Controller
      * 2️ Update Stripe payment status (used in webhook or after confirmation)
      */
     public function updateStatus(Request $request)
-    {
-        $request->validate([
-            'order_id' => 'required|exists:payments,order_id',
-            'status'   => 'required|string|in:succeeded,failed',
-        ]);
+{
+    $request->validate([
+        'order_id' => 'required|exists:payments,order_id',
+        'status'   => 'required|string|in:succeeded,failed',
+    ]);
 
-        Payment::where('order_id', $request->order_id)->update([
-            'status' => $request->status,
-        ]);
+    // update payment status
+    Payment::where('order_id', $request->order_id)->update([
+        'status' => $request->status,
+    ]);
 
-        return response()->json(['message' => 'Payment status updated']);
+    // also update order status
+    if ($request->status === 'succeeded') {
+        Order::where('id', $request->order_id)->update([
+            'status' => 'completed',
+        ]);
     }
+
+    return response()->json(['message' => 'Payment + Order status updated']);
+}
+
 
     /**
      * 3️ Charge a saved card (off-session payment)

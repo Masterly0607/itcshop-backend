@@ -85,6 +85,7 @@ Route::prefix('customer')->group(function () {
 
         // Stripe Payment
         Route::post('/stripe/payment-intent', [StripePaymentController::class, 'createPaymentIntent']); // for one-time
+        Route::post('/stripe/update-status', [StripePaymentController::class, 'updateStatus']);
         Route::post('/stripe/charge', [StripePaymentController::class, 'payWithSavedCard']); // saved card
     });
 });
