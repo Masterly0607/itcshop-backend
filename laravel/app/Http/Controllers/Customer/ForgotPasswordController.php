@@ -14,7 +14,7 @@ class ForgotPasswordController extends Controller
     // 1. Send OTP to reset password
     public function sendOtp(Request $request)
     {
-        $request->validate([
+        $data =  $request->validate([
             'email' => 'required|email|exists:customers,email',
         ]);
 
@@ -36,7 +36,7 @@ class ForgotPasswordController extends Controller
         ]);
 
         // Send OTP (via job)
-        (new SendCustomerOtpEmail($request->email, $otp))->handle();
+      (new \App\Jobs\SendCustomerOtpEmail($data['email'], $otp))->handle();
 
         return response()->json(['message' => 'OTP sent to your email.']);
     }
