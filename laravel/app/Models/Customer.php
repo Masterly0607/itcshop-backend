@@ -20,6 +20,8 @@ class Customer extends Authenticatable
         'phone',
         'password',
         'status',
+        'google_id',     
+    'is_verified',  
     ];
 
     protected $hidden = [
