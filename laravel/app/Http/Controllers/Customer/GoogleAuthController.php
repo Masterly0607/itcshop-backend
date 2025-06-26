@@ -35,7 +35,7 @@ class GoogleAuthController extends Controller
         $user = Customer::where('email', $googleUser->getEmail())->first();
 
         if (!$user) {
-            // Create new customer
+            // ✅ Create new verified customer
             $user = Customer::create([
                 'first_name'  => $firstName,
                 'last_name'   => $lastName,
@@ -47,17 +47,19 @@ class GoogleAuthController extends Controller
                 'address'     => '',
             ]);
         } else {
-            // ✅ Always update verification and google_id (if missing)
-            $user->update([
-                'google_id'   => $user->google_id ?? $googleUser->getId(),
-                'is_verified' => true,
-            ]);
+            // ✅ Always set is_verified and save (even if google_id exists)
+            if (!$user->google_id) {
+                $user->google_id = $googleUser->getId();
+            }
+
+            $user->is_verified = true;
+            $user->save();
         }
 
-        // Generate token for frontend
+        // ✅ Create token
         $token = $user->createToken('customer-token')->plainTextToken;
 
-        // Redirect to frontend with token
+        // ✅ Redirect to frontend
         return redirect("https://itcshop-customer.netlify.app/auth/google-success?token=$token");
     }
 }
